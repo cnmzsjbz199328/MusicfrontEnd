@@ -35,12 +35,8 @@ export function PlayerOverlay() {
                     } else if (currentTrack.lyrics_url) {
                         console.log('Fetching lyrics from URL:', currentTrack.lyrics_url);
                         try {
-                            // Use proxy to bypass CORS in development
-                            const proxyUrl = currentTrack.lyrics_url.replace(
-                                'https://pub-d7235119de4d45ec9ed9eda56665dd77.r2.dev',
-                                '/r2-proxy'
-                            );
-                            const res = await fetch(proxyUrl);
+                            // Fetch directly from R2 (publicly accessible)
+                            const res = await fetch(currentTrack.lyrics_url);
                             if (res.ok) {
                                 const text = await res.text();
                                 setLyrics(text);
