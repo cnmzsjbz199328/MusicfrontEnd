@@ -1,0 +1,494 @@
+<!doctype html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Gequbao Music Crawler Test</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f7;
+            color: #1d1d1f;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        h2 {
+            margin-top: 0;
+            color: #1d1d1f;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        input {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #d2d2d7;
+            border-radius: 8px;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input:focus {
+            border-color: #0071e3;
+        }
+
+        button {
+            padding: 12px 24px;
+            background-color: #0071e3;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        button:hover {
+            background-color: #0077ed;
+        }
+
+        button:disabled {
+            background-color: #999;
+            cursor: not-allowed;
+        }
+
+        .section-title {
+            margin-top: 30px;
+            margin-bottom: 15px;
+            font-size: 18px;
+            font-weight: 600;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        .track-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .track-item {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background-color 0.2s;
+        }
+
+        .track-item:last-child {
+            border-bottom: none;
+        }
+
+        .track-item:hover {
+            background-color: #f9f9f9;
+        }
+
+        .track-info {
+            flex: 1;
+        }
+
+        .track-title {
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 4px;
+        }
+
+        .track-artist {
+            color: #86868b;
+            font-size: 14px;
+        }
+
+        .track-actions {
+            margin-left: 20px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-sm {
+            padding: 8px 16px;
+            font-size: 14px;
+        }
+
+        .btn-secondary {
+            background-color: #e5e5ea;
+            color: #1d1d1f;
+        }
+
+        .btn-secondary:hover {
+            background-color: #d2d2d7;
+        }
+
+        .btn-danger {
+            background-color: #ff3b30;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #d70015;
+        }
+
+        .status {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .status.error {
+            background-color: #fff2f2;
+            color: #d70015;
+            display: block;
+        }
+
+        .status.success {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+            display: block;
+        }
+
+        .status.loading {
+            background-color: #f2f2f2;
+            color: #666;
+            display: block;
+        }
+
+        .player-container {
+            margin-top: 20px;
+            padding: 20px;
+            background: #f5f5f7;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .player-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        audio {
+            width: 100%;
+            outline: none;
+        }
+
+        pre {
+            background: #f5f5f7;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-size: 12px;
+            color: #333;
+            display: none;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h2>Gequbao Music Crawler Test</h2>
+
+        <div class="input-group">
+            <input id="q" placeholder="输入歌曲名，例如: 周杰伦" value="周杰伦" />
+            <button id="btnSearch">搜索</button>
+        </div>
+
+        <div id="status" class="status"></div>
+
+        <div id="playerContainer" class="player-container">
+            <div id="playerTitle" class="player-title"></div>
+            <audio id="audioPlayer" controls></audio>
+            <div style="margin-top: 10px; font-size: 12px; color: #666;">
+                MP3 URL: <a id="mp3Link" href="#" target="_blank"></a>
+            </div>
+        </div>
+
+        <div class="section-title">搜索结果</div>
+        <div id="results" class="track-list"></div>
+
+        <div class="section-title">
+            我的收藏
+            <button id="btnRefreshFavs" class="btn-sm btn-secondary" style="float: right;">刷新</button>
+        </div>
+        <div id="favorites" class="track-list"></div>
+
+        <h3 style="margin-top: 30px;">Debug Log</h3>
+        <pre id="debugLog"></pre>
+    </div>
+
+    <script>
+        // Configuration
+        const DEFAULT_API = 'https://gequbao-worker.tj15982183241.workers.dev';
+
+        // Elements
+        const qInput = document.getElementById('q');
+        const btnSearch = document.getElementById('btnSearch');
+        const btnRefreshFavs = document.getElementById('btnRefreshFavs');
+        const resultsEl = document.getElementById('results');
+        const favoritesEl = document.getElementById('favorites');
+        const statusEl = document.getElementById('status');
+        const playerContainer = document.getElementById('playerContainer');
+        const playerTitle = document.getElementById('playerTitle');
+        const audioPlayer = document.getElementById('audioPlayer');
+        const mp3Link = document.getElementById('mp3Link');
+        const debugLog = document.getElementById('debugLog');
+
+        // Helper to get API base
+        function getApiBase() {
+            const params = new URLSearchParams(window.location.search);
+            return params.get('api_base') || DEFAULT_API;
+        }
+
+        const API_BASE = getApiBase();
+
+        function log(msg, data = null) {
+            const time = new Date().toLocaleTimeString();
+            let text = `[${time}] ${msg}`;
+            if (data) {
+                text += '\n' + JSON.stringify(data, null, 2);
+            }
+            debugLog.style.display = 'block';
+            debugLog.textContent = text + '\n\n' + debugLog.textContent;
+            console.log(msg, data);
+        }
+
+        function showStatus(msg, type = 'loading') {
+            statusEl.textContent = msg;
+            statusEl.className = `status ${type}`;
+            if (type === 'success') {
+                setTimeout(() => { if (statusEl.textContent === msg) hideStatus(); }, 3000);
+            }
+        }
+
+        function hideStatus() {
+            statusEl.style.display = 'none';
+        }
+
+        // Search Function
+        async function search() {
+            const query = qInput.value.trim();
+            if (!query) return;
+
+            btnSearch.disabled = true;
+            showStatus('正在搜索...');
+            resultsEl.innerHTML = '';
+            hideStatus();
+
+            try {
+                log(`Searching for: ${query}`);
+                const res = await fetch(`${API_BASE}/api/search?q=${encodeURIComponent(query)}`);
+
+                if (!res.ok) {
+                    throw new Error(`HTTP error! status: ${res.status}`);
+                }
+
+                const data = await res.json();
+                log('Search results received', data);
+
+                if (data.results && data.results.length > 0) {
+                    renderResults(data.results);
+                } else {
+                    showStatus('未找到相关歌曲', 'error');
+                }
+            } catch (err) {
+                log('Search error', err);
+                showStatus(`搜索失败: ${err.message}`, 'error');
+            } finally {
+                btnSearch.disabled = false;
+            }
+        }
+
+        function renderResults(tracks) {
+            resultsEl.innerHTML = '';
+            tracks.forEach(track => {
+                const div = document.createElement('div');
+                div.className = 'track-item';
+                div.innerHTML = `
+                <div class="track-info">
+                    <div class="track-title">${track.title}</div>
+                    <div class="track-artist">${track.artist}</div>
+                </div>
+                <div class="track-actions">
+                    <button class="btn-sm" onclick="playTrack('${track.id}', '${track.title}', '${track.artist}')">播放</button>
+                    <button class="btn-sm btn-secondary" onclick="addFavorite('${track.id}', '${track.title}', '${track.artist}')">收藏</button>
+                </div>
+            `;
+                resultsEl.appendChild(div);
+            });
+        }
+
+        // Favorites Functions
+        async function loadFavorites() {
+            favoritesEl.innerHTML = '<div style="padding:15px;color:#666">加载中...</div>';
+            try {
+                log('Loading favorites...');
+                const res = await fetch(`${API_BASE}/api/favorites`);
+                if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+
+                const data = await res.json();
+                log('Favorites received', data);
+                renderFavorites(data);
+            } catch (err) {
+                log('Load favorites error', err);
+                favoritesEl.innerHTML = `<div style="padding:15px;color:red">加载失败: ${err.message}</div>`;
+            }
+        }
+
+        function renderFavorites(favorites) {
+            favoritesEl.innerHTML = '';
+            if (!favorites || favorites.length === 0) {
+                favoritesEl.innerHTML = '<div style="padding:15px;color:#666">暂无收藏</div>';
+                return;
+            }
+
+            favorites.forEach(fav => {
+                const div = document.createElement('div');
+                div.className = 'track-item';
+                // Use stream endpoint for playback if available, otherwise use stored public URL
+                const streamUrl = `${API_BASE}/api/favorites/${fav.id}/stream`;
+
+                div.innerHTML = `
+                <div class="track-info">
+                    <div class="track-title">${fav.title}</div>
+                    <div class="track-artist">${fav.artist}</div>
+                    ${fav.lyrics_url ? `<div style="font-size:12px;color:#0071e3;margin-top:4px"><a href="${fav.lyrics_url}" target="_blank">查看歌词</a></div>` : ''}
+                </div>
+                <div class="track-actions">
+                    <button class="btn-sm" onclick="playUrl('${streamUrl}', '${fav.title}', '${fav.artist}')">播放</button>
+                    <button class="btn-sm btn-danger" onclick="deleteFavorite('${fav.id}')">删除</button>
+                </div>
+            `;
+                favoritesEl.appendChild(div);
+            });
+        }
+
+        window.addFavorite = async function (id, title, artist) {
+            if (!confirm(`确定要收藏 "${title}" 吗？这可能需要几秒钟来下载歌曲。`)) return;
+
+            showStatus(`正在收藏 "${title}"... (下载中)`);
+
+            try {
+                // 1. Resolve track first to get MP3 URL
+                log(`Resolving track for favorite: ${id}`);
+                const trackRes = await fetch(`${API_BASE}/api/track/${id}`);
+                if (!trackRes.ok) throw new Error('Failed to resolve track URL');
+                const trackData = await trackRes.json();
+
+                if (!trackData.url) throw new Error('No MP3 URL found');
+
+                // 2. Add to favorites
+                const payload = {
+                    track_id: id,
+                    title: title,
+                    artist: artist,
+                    cover_url: '',
+                    original_page_url: `https://www.gequbao.com/music/${id}`,
+                    mp3_url: trackData.url,
+                    lyrics: trackData.lyrics,
+                    duration_seconds: 0
+                };
+
+                log('Sending favorite payload', payload);
+                const favRes = await fetch(`${API_BASE}/api/favorites`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!favRes.ok) {
+                    const errText = await favRes.text();
+                    throw new Error(errText || `Status ${favRes.status}`);
+                }
+
+                showStatus(`收藏成功: ${title}`, 'success');
+                loadFavorites(); // Refresh list
+
+            } catch (err) {
+                log('Add favorite error', err);
+                showStatus(`收藏失败: ${err.message}`, 'error');
+            }
+        };
+
+        window.deleteFavorite = async function (id) {
+            if (!confirm('确定要删除这个收藏吗？')) return;
+
+            try {
+                log(`Deleting favorite: ${id}`);
+                const res = await fetch(`${API_BASE}/api/favorites/${id}`, { method: 'DELETE' });
+                if (!res.ok) throw new Error(`Status ${res.status}`);
+
+                loadFavorites(); // Refresh list
+            } catch (err) {
+                log('Delete favorite error', err);
+                alert(`删除失败: ${err.message}`);
+            }
+        };
+
+        // Play/Resolve Function (for search results)
+        window.playTrack = async function (id, title, artist) {
+            showStatus(`正在解析 "${title}" 的下载链接... (可能需要几秒钟)`);
+            playerContainer.style.display = 'none';
+            audioPlayer.pause();
+
+            try {
+                log(`Resolving track ID: ${id}`);
+                const res = await fetch(`${API_BASE}/api/track/${id}`);
+
+                if (!res.ok) {
+                    throw new Error(`HTTP error! status: ${res.status}`);
+                }
+
+                const data = await res.json();
+                log('Track resolved', data);
+
+                if (data.url) {
+                    hideStatus();
+                    playUrl(data.url, title, artist);
+                } else {
+                    showStatus('解析失败: 未找到 MP3 链接', 'error');
+                }
+            } catch (err) {
+                log('Resolve error', err);
+                showStatus(`解析失败: ${err.message}`, 'error');
+            }
+        };
+
+        window.playUrl = function (url, title, artist) {
+            playerTitle.textContent = `${title} - ${artist}`;
+            audioPlayer.src = url;
+            mp3Link.href = url;
+            mp3Link.textContent = url;
+            playerContainer.style.display = 'block';
+            audioPlayer.play().catch(e => log('Auto-play blocked', e));
+        };
+
+        // Event Listeners
+        btnSearch.addEventListener('click', search);
+        qInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') search();
+        });
+        btnRefreshFavs.addEventListener('click', loadFavorites);
+
+        // Initial load
+        loadFavorites();
+    </script>
+</body>
+
+</html>

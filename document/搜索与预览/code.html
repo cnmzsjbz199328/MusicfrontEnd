@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html class="dark" lang="zh"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>搜索与预览</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Spline+Sans:wght@300..700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings:
+            'FILL' 0,
+            'wght' 400,
+            'GRAD' 0,
+            'opsz' 24
+        }
+    </style>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#00bfe6",
+              "background-light": "#f5f8f8",
+              "background-dark": "#0f2023",
+            },
+            fontFamily: {
+              "display": ["Spline Sans", "sans-serif"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="font-display">
+<div class="relative flex h-auto min-h-screen w-full flex-col bg-background-light dark:bg-background-dark group/design-root overflow-x-hidden">
+<div class="flex items-center bg-background-light dark:bg-background-dark p-4 pb-2 justify-between sticky top-0 z-10">
+<h2 class="text-slate-900 dark:text-white text-2xl font-bold leading-tight tracking-[-0.015em] flex-1 text-center">搜索</h2>
+</div>
+<div class="px-4 py-3 sticky top-[68px] z-10 bg-background-light dark:bg-background-dark">
+<label class="flex flex-col min-w-40 h-12 w-full">
+<div class="flex w-full flex-1 items-stretch rounded-xl h-full shadow-sm">
+<div class="text-slate-500 dark:text-slate-400 flex border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 items-center justify-center pl-4 rounded-l-xl border-y border-l">
+<span class="material-symbols-outlined">search</span>
+</div>
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-r-xl text-slate-900 dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 focus:border-primary h-full placeholder:text-slate-500 dark:placeholder:text-slate-400 px-4 pl-2 text-base font-normal leading-normal" placeholder="搜索歌曲或艺术家" value=""/>
+</div>
+</label>
+</div>
+<div class="h-2 bg-background-light dark:bg-background-dark"></div>
+<div class="flex flex-col gap-1 px-2 pb-24">
+<div class="flex items-center gap-4 bg-background-light dark:bg-background-dark px-2 py-2 justify-between rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/50">
+<div class="flex items-center gap-4">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-md size-14" data-alt="Album art for the song Blinding Lights" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCOvO2YLaZSyz4nrDlj4GXioW5JPPP3R2l9_5UAgqEkXLv8CY_IVov5mGo8c_lZzTykJanQ1fxtg79anhT-bRLhgZlb51oJxFmfgQ_zvGxW-9EwwNFDYoiIkQDnVK2KndmWSsAysFdDZJClxwzcFDAglmpbvghlCMv__LceedPnYiyhO2oqbT8kfUfY8oDhmwjBpgDWdpSaVvKk--5URMxHe7XAVvXzo1HrkY4p_Af-5CTj2js_ICNTNay4XAv8OQ-BUJFHGub7jSHI");'></div>
+<div class="flex flex-col justify-center">
+<p class="text-slate-900 dark:text-white text-base font-medium leading-normal line-clamp-1">Blinding Lights</p>
+<p class="text-slate-500 dark:text-slate-400 text-sm font-normal leading-normal line-clamp-2">The Weeknd</p>
+</div>
+</div>
+<div class="flex items-center gap-2 shrink-0">
+<button aria-label="Play" class="text-slate-900 dark:text-white flex size-10 items-center justify-center rounded-full hover:bg-primary/20">
+<span class="material-symbols-outlined text-3xl">play_circle</span>
+</button>
+<button aria-label="Add to favorites" class="text-slate-500 dark:text-slate-400 flex size-10 items-center justify-center rounded-full hover:bg-primary/20">
+<span class="material-symbols-outlined">favorite</span>
+</button>
+</div>
+</div>
+<div class="flex items-center gap-4 bg-background-light dark:bg-background-dark px-2 py-2 justify-between rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/50">
+<div class="flex items-center gap-4">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-md size-14" data-alt="Album art for the song As It Was" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCC4R9Um8fAiEFbvpdymEEb5-It23s01KNYpYWr-N9z1rTiAqGPUmyJYvgawUNXZ7bo9EydtIzweO6UlMYNj42XqJWQC5vnp2vVaS0sSxELHkHC8Tn7mdtchrguSSsB4_0abJ2iZqxwuSKylOTCvZ0cCe-mm65fR6J88jvR861E3qli8yu8Zrzh7_J4MogSRpZvIGOdpEOb7d-SWe3xCE_HLsXcLDt-9ituFKdJ_U2mpFtKudsoxvPFNuRyv3aOX0VM2YrdX1V6nzol");'></div>
+<div class="flex flex-col justify-center">
+<p class="text-slate-900 dark:text-white text-base font-medium leading-normal line-clamp-1">As It Was</p>
+<p class="text-slate-500 dark:text-slate-400 text-sm font-normal leading-normal line-clamp-2">Harry Styles</p>
+</div>
+</div>
+<div class="flex items-center gap-2 shrink-0">
+<button aria-label="Play" class="text-slate-900 dark:text-white flex size-10 items-center justify-center rounded-full hover:bg-primary/20">
+<span class="material-symbols-outlined text-3xl">play_circle</span>
+</button>
+<button aria-label="Remove from favorites" class="text-pink-500 flex size-10 items-center justify-center rounded-full hover:bg-primary/20">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">favorite</span>
+</button>
+</div>
+</div>
+<div class="flex items-center gap-4 bg-background-light dark:bg-background-dark px-2 py-2 justify-between rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/50">
+<div class="flex items-center gap-4">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-md size-14" data-alt="Album art for the song Levitating" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuC4E8ac_sxagoGdtmpl9yzcWGN-p93C7YH49LKJxWiCv1Q6V5N9mE9sFrRa_EIWDcDd28MlYm7OWN0fD7bUsQbmT0VTHo5dZnJMqkfUM1UXV2UtzFECrUiCNP-OXffkNg5X2sE0FPyUJLBKsPcuS2J5AxpGmGxvnfxVt9F2TN3F_ucQU4PQBEEYQs3iZ88DUUGyxDtQ2GcHHbTWgLAbjylaFsDU-jFH8ruUlvXIEDF8IFZ6_XtuaNzM90ZkkUEtpodxXoGyAUkV5ZOn");'></div>
+<div class="flex flex-col justify-center">
+<p class="text-slate-900 dark:text-white text-base font-medium leading-normal line-clamp-1">Levitating</p>
+<p class="text-slate-500 dark:text-slate-400 text-sm font-normal leading-normal line-clamp-2">Dua Lipa</p>
+</div>
+</div>
+<div class="flex items-center gap-2 shrink-0">
+<button aria-label="Play" class="text-slate-900 dark:text-white flex size-10 items-center justify-center rounded-full hover:bg-primary/20">
+<span class="material-symbols-outlined text-3xl">play_circle</span>
+</button>
+<button aria-label="Add to favorites" class="text-slate-500 dark:text-slate-400 flex size-10 items-center justify-center rounded-full hover:bg-primary/20">
+<span class="material-symbols-outlined">favorite</span>
+</button>
+</div>
+</div>
+<div class="flex items-center gap-4 bg-background-light dark:bg-background-dark px-2 py-2 justify-between rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/50">
+<div class="flex items-center gap-4">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-md size-14" data-alt="Album art for the song Good 4 U" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuC5ZMRS6q8QUakIssybSCxyZy8pF5LusafSvRWyQ6LiEGjKEuGOqZZUJJa3KiNE0chAMF58Swkclmt6mVRF71ptP2H63JnsMTyBwf1lxSwof3XKfpq2Imk6sXwM2Vy89lZxcb6a2iVvKjtMyGnOljFCr1Gv_luqBlkR5mUk6tEDP4O0nYGlsjJy3AH085uJMHYyUKXnnf46GaL_S8m00yzN_8_XMhCJ9iptQ-Sx0U7Wb1ZEKbarAFDCe_MmOB1-E5Yzw4XEzUr2IcsW");'></div>
+<div class="flex flex-col justify-center">
+<p class="text-slate-900 dark:text-white text-base font-medium leading-normal line-clamp-1">Good 4 U</p>
+<p class="text-slate-500 dark:text-slate-400 text-sm font-normal leading-normal line-clamp-2">Olivia Rodrigo</p>
+</div>
+</div>
+<div class="flex items-center gap-2 shrink-0">
+<button aria-label="Play" class="text-slate-900 dark:text-white flex size-10 items-center justify-center rounded-full hover:bg-primary/20">
+<span class="material-symbols-outlined text-3xl">play_circle</span>
+</button>
+<button aria-label="Add to favorites" class="text-slate-500 dark:text-slate-400 flex size-10 items-center justify-center rounded-full hover:bg-primary/20">
+<span class="material-symbols-outlined">favorite</span>
+</button>
+</div>
+</div>
+</div>
+<div class="fixed bottom-0 left-0 right-0 z-20 p-2">
+<div class="flex flex-col w-full h-auto bg-slate-100/80 dark:bg-slate-800/80 backdrop-blur-md rounded-xl shadow-lg border border-slate-200 dark:border-slate-700 overflow-hidden">
+<div class="w-full h-1 bg-slate-300 dark:bg-slate-600 relative">
+<div class="absolute top-0 left-0 h-full w-1/4 bg-primary"></div>
+</div>
+<div class="flex items-center gap-3 p-2">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-md size-12" data-alt="Album art for the song As It Was" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCC4R9Um8fAiEFbvpdymEEb5-It23s01KNYpYWr-N9z1rTiAqGPUmyJYvgawUNXZ7bo9EydtIzweO6UlMYNj42XqJWQC5vnp2vVaS0sSxELHkHC8Tn7mdtchrguSSsB4_0abJ2iZqxwuSKylOTCvZ0cCe-mm65fR6J88jvR861E3qli8yu8Zrzh7_J4MogSRpZvIGOdpEOb7d-SWe3xCE_HLsXcLDt-9ituFKdJ_U2mpFtKudsoxvPFNuRyv3aOX0VM2YrdX1V6nzol");'></div>
+<div class="flex flex-col justify-center flex-1 min-w-0">
+<p class="text-slate-900 dark:text-white text-sm font-medium leading-tight truncate">As It Was</p>
+<p class="text-slate-500 dark:text-slate-400 text-xs font-normal leading-tight truncate">Harry Styles</p>
+</div>
+<div class="flex items-center gap-1 shrink-0">
+<button aria-label="Pause" class="text-slate-900 dark:text-white flex size-10 items-center justify-center rounded-full hover:bg-primary/20">
+<span class="material-symbols-outlined text-3xl">pause_circle</span>
+</button>
+<button aria-label="Close player" class="text-slate-500 dark:text-slate-400 flex size-10 items-center justify-center rounded-full hover:bg-primary/20">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</body></html>
