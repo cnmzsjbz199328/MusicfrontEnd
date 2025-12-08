@@ -3,7 +3,7 @@ import { usePlayerStore } from '@/store/usePlayerStore';
 import { api } from '@/lib/api';
 
 export function PlayerOverlay() {
-    const { currentTrack, isPlaying, togglePlay, setPlaying, nextTrack, prevTrack, isExpanded, setExpanded, isShuffle, toggleShuffle, repeatMode, toggleRepeat } = usePlayerStore();
+    const { currentTrack, isPlaying, togglePlay, setPlaying, nextTrack, prevTrack, isExpanded, setExpanded, playMode, togglePlayMode } = usePlayerStore();
     const audioRef = useRef<HTMLAudioElement>(null);
     const [resolvedUrl, setResolvedUrl] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
@@ -211,17 +211,18 @@ export function PlayerOverlay() {
                     <div className="flex items-center justify-around gap-6 pt-1">
                         {/* Shuffle Button */}
                         <button
-                            className={`flex size-12 shrink-0 items-center justify-center rounded-full transition-colors ${isShuffle
+                            className={`flex size-12 shrink-0 items-center justify-center rounded-full transition-colors ${['shuffle', 'shuffle-one'].includes(playMode)
                                 ? 'text-primary'
                                 : 'text-slate-500 dark:text-slate-400'
                                 }`}
-                            onClick={toggleShuffle}
-                            aria-label="Shuffle"
+                            onClick={togglePlayMode}
+                            aria-label="Play Mode"
+                            title={`Play Mode: ${playMode}`}
                         >
                             <span className="material-symbols-outlined text-2xl">shuffle</span>
                         </button>
 
-                        <button className="flex size-12 shrink-0 items-center justify-center rounded-full text-slate-800 dark:text-white" onClick={prevTrack}>
+                        <button className="flex size-12 shrink-0 items-center justify-center rounded-full text-slate-800 dark:text-white" onClick={prevTrack} aria-label="Previous">
                             <span className="material-symbols-outlined text-4xl">skip_previous</span>
                         </button>
 
@@ -229,6 +230,7 @@ export function PlayerOverlay() {
                             className="flex size-16 shrink-0 items-center justify-center rounded-full bg-primary text-background-dark"
                             onClick={togglePlay}
                             disabled={loading || !resolvedUrl}
+                            aria-label={isPlaying ? 'Pause' : 'Play'}
                         >
                             {loading ? (
                                 <span className="material-symbols-outlined text-4xl animate-spin">refresh</span>
@@ -239,21 +241,22 @@ export function PlayerOverlay() {
                             )}
                         </button>
 
-                        <button className="flex size-12 shrink-0 items-center justify-center rounded-full text-slate-800 dark:text-white" onClick={nextTrack}>
+                        <button className="flex size-12 shrink-0 items-center justify-center rounded-full text-slate-800 dark:text-white" onClick={nextTrack} aria-label="Next">
                             <span className="material-symbols-outlined text-4xl">skip_next</span>
                         </button>
 
                         {/* Repeat Button */}
                         <button
-                            className={`flex size-12 shrink-0 items-center justify-center rounded-full transition-colors relative ${repeatMode === 'off'
-                                ? 'text-slate-500 dark:text-slate-400'
-                                : 'text-primary'
+                            className={`flex size-12 shrink-0 items-center justify-center rounded-full transition-colors relative ${playMode.includes('repeat')
+                                ? 'text-primary'
+                                : 'text-slate-500 dark:text-slate-400'
                                 }`}
-                            onClick={toggleRepeat}
-                            aria-label="Repeat"
+                            onClick={togglePlayMode}
+                            aria-label="Play Mode"
+                            title={`Play Mode: ${playMode}`}
                         >
                             <span className="material-symbols-outlined text-2xl">repeat</span>
-                            {repeatMode === 'one' && (
+                            {playMode === 'repeat-one' && (
                                 <span className="absolute text-xs font-bold text-primary leading-none">1</span>
                             )}
                         </button>
