@@ -7,7 +7,7 @@ export function SearchPage() {
     const [query, setQuery] = useState('');
     const [results, setResults] = useState<Track[]>([]);
     const [loading, setLoading] = useState(false);
-    const { playTrack } = usePlayerStore();
+    const { setQueue } = usePlayerStore();
 
     const handleSearch = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -112,7 +112,7 @@ export function SearchPage() {
                             <button
                                 aria-label="Play"
                                 className="text-slate-900 dark:text-white flex size-10 items-center justify-center rounded-full hover:bg-primary/20"
-                                onClick={() => playTrack(track)}
+                                onClick={() => setQueue(results, results.indexOf(track))}
                             >
                                 <span className="material-symbols-outlined text-3xl">play_circle</span>
                             </button>

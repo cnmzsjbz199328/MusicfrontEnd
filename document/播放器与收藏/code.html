@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html class="dark" lang="en"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
@@ -40,10 +39,14 @@
       min-height: max(884px, 100dvh);
     }
   </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
   </head>
 <body class="font-display">
 <div class="relative min-h-screen w-full overflow-hidden bg-background-light dark:bg-background-dark">
-<!-- Drawer Component -->
 <div class="absolute inset-y-0 left-0 z-50 w-full transform transition-transform duration-300 ease-in-out">
 <div class="absolute inset-0 bg-black/60"></div>
 <div class="relative flex h-full w-10/12 max-w-sm flex-col bg-background-light p-4 shadow-2xl dark:bg-background-dark">
@@ -54,7 +57,6 @@
 </button>
 </div>
 <div class="flex flex-1 flex-col gap-2 overflow-y-auto">
-<!-- List Item 1 (Active) -->
 <div class="flex items-center justify-between gap-4 rounded-lg bg-primary/20 p-2">
 <div class="flex min-w-0 flex-1 items-center gap-4">
 <img class="size-12 shrink-0 rounded-md object-cover" data-alt="Abstract image of a person wearing headphones" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBsJdbMOisa_oBQv0dkZwuZlP4C3krjhdf56VSsorJMwgSlArSFgea4ux3U8Rl4AOIiuKABLE6qk0Wi1SeySADwrjmoYYPTl7QOD7jxPMeZX8fpHAcKNFq42wH8mimHoy3QBmksW_ZhDuToEkpLU49piTK3zS84ALCm1s5j0OQ7lktI9tQnosSOPerAGW2SEtjRt4LZCfB84dyaUi0z9_gAEPMM356gAfAnOj7QYzpZ31sW1Hf4cm0Ai7y1J8kYOgrmPmIS06WsJ2ya"/>
@@ -67,7 +69,6 @@
 <span class="material-symbols-outlined text-2xl text-gray-600 dark:text-gray-400">delete</span>
 </button>
 </div>
-<!-- List Item 2 -->
 <div class="flex items-center justify-between gap-4 rounded-lg p-2 hover:bg-gray-200 dark:hover:bg-white/10">
 <div class="flex min-w-0 flex-1 items-center gap-4">
 <img class="size-12 shrink-0 rounded-md object-cover" data-alt="Vibrant concert scene with colorful lights" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDFyB9HdnQgtgmhA-3_lufGyK97oytIGBJ-XEDTqQX3ssNvOQbbKB4ETW_ki9s2pzA6qHTdo_8AHs-KZv2DfPsvroRcO1hqwLEXK6jWsHN1-R7uXqZylTrgbBPgNaE_etd7FVZpYoVXjjGZ4UkRa4MN-KgFRa390m-1GV7GRRw-bfKvR7gjugM5_6WlEgOPjxtT0NvdwszxPMECF-c6YIbigIBRgiegoj56GwTBScsTDXaJLVFofZP1rW23HxBXFrFMWkLzuEcHR0qY"/>
@@ -80,7 +81,6 @@
 <span class="material-symbols-outlined text-2xl text-gray-600 dark:text-gray-400">delete</span>
 </button>
 </div>
-<!-- List Item 3 -->
 <div class="flex items-center justify-between gap-4 rounded-lg p-2 hover:bg-gray-200 dark:hover:bg-white/10">
 <div class="flex min-w-0 flex-1 items-center gap-4">
 <img class="size-12 shrink-0 rounded-md object-cover" data-alt="Man playing a guitar on a stage" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAdC1xMr26ZoJ2aPTqx1lbVoJTbASQwIsGkyrtRFJbMGAbStCdaBLNScyh8gONNcam2mrcW8fb5hd-Sii4GsPO3ABGgJvIsZtn4qzV72PGXDsFyY52fKt1rBbi6dWqskVTWbNlzonrq8MRDPZ54P7L82vKJefchvqVAEB5AjAuWvdM7E9b9871rzHr8YdtBR7o-M2SOGr1XN9kJYJHDuLMK1TnZoOQlIsA75cI1SzaAKyCbgbDmjW1hzf1md_YsatDYFM3xur5NBJKT"/>
@@ -96,9 +96,7 @@
 </div>
 </div>
 </div>
-<!-- Main Player UI -->
 <main class="flex h-screen flex-col p-4 pt-8 text-gray-900 dark:text-white">
-<!-- Header -->
 <header class="flex items-center justify-between">
 <button class="flex size-10 items-center justify-center rounded-full bg-gray-200/50 dark:bg-white/10">
 <span class="material-symbols-outlined text-2xl">menu</span>
@@ -108,7 +106,6 @@
 <span class="material-symbols-outlined text-2xl">more_horiz</span>
 </button>
 </header>
-<!-- Media Player Section -->
 <div class="flex flex-1 flex-col items-stretch justify-center gap-6 pb-4">
 <div class="flex items-center justify-center py-7">
 <div class="w-full max-w-xs">
@@ -132,7 +129,10 @@
 <p class="text-xs font-medium tracking-[0.015em] text-gray-500 dark:text-gray-400">2:23</p>
 </div>
 </div>
-<div class="flex items-center justify-center gap-6 pt-1">
+<div class="flex items-center justify-around gap-6 pt-1">
+<button class="flex size-12 shrink-0 items-center justify-center rounded-full text-gray-500 dark:text-gray-400">
+<span class="material-symbols-outlined text-2xl">shuffle</span>
+</button>
 <button class="flex size-12 shrink-0 items-center justify-center rounded-full text-gray-800 dark:text-white">
 <span class="material-symbols-outlined text-4xl">skip_previous</span>
 </button>
@@ -141,6 +141,9 @@
 </button>
 <button class="flex size-12 shrink-0 items-center justify-center rounded-full text-gray-800 dark:text-white">
 <span class="material-symbols-outlined text-4xl">skip_next</span>
+</button>
+<button class="flex size-12 shrink-0 items-center justify-center rounded-full text-primary">
+<span class="material-symbols-outlined text-2xl">repeat</span>
 </button>
 </div>
 </div>
