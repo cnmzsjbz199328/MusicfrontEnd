@@ -1,4 +1,4 @@
-export const API_BASE = 'https://gequbao-worker.tj15982183241.workers.dev';
+export const API_BASE = 'https://music.badtom.dpdns.org';
 
 export interface Track {
     id: string;
