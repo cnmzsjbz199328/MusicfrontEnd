@@ -90,43 +90,66 @@ export function SearchPage() {
             {/* Spacer */}
             <div className="h-2 bg-background-light dark:bg-background-dark"></div>
 
-            {/* Search Results List */}
-            <div className="flex flex-col gap-1 px-2">
-                {loading && <div className="p-4 text-center text-slate-500">搜索中...</div>}
-
-                {results.map((track) => (
-                    <div key={track.id} className="flex items-center gap-4 bg-background-light dark:bg-background-dark px-2 py-2 justify-between rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/50">
-                        <div className="flex items-center gap-4">
-                            <div
-                                className="bg-center bg-no-repeat aspect-square bg-cover rounded-md size-14 bg-slate-200 dark:bg-slate-700"
-                                style={{ backgroundImage: track.cover_url ? `url("${track.cover_url}")` : undefined }}
-                            >
-                                {!track.cover_url && <span className="material-symbols-outlined text-slate-400 flex items-center justify-center h-full">music_note</span>}
-                            </div>
-                            <div className="flex flex-col justify-center">
-                                <p className="text-slate-900 dark:text-white text-base font-medium leading-normal line-clamp-1">{track.title}</p>
-                                <p className="text-slate-500 dark:text-slate-400 text-sm font-normal leading-normal line-clamp-2">{track.artist}</p>
-                            </div>
+            {/* Content Area */}
+            {results.length === 0 && !loading ? (
+                // Show podcast embed when no search results
+                <div className="flex-1 w-full overflow-y-auto flex flex-col items-center justify-center">
+                    <div className="w-full max-w-2xl px-4 py-6">
+                        <div className="text-center mb-6">
+                            <p className="text-slate-600 dark:text-slate-300 text-sm">
+                                没有想听的歌？<span className="text-primary font-medium">试试AI播客吧！</span>
+                            </p>
                         </div>
-                        <div className="flex items-center gap-2 shrink-0">
-                            <button
-                                aria-label="Play"
-                                className="text-slate-900 dark:text-white flex size-10 items-center justify-center rounded-full hover:bg-primary/20"
-                                onClick={() => setQueue(results, results.indexOf(track))}
-                            >
-                                <span className="material-symbols-outlined text-3xl">play_circle</span>
-                            </button>
-                            <button
-                                aria-label="Add to favorites"
-                                className="text-slate-500 dark:text-slate-400 flex size-10 items-center justify-center rounded-full hover:bg-primary/20"
-                                onClick={() => handleFavorite(track)}
-                            >
-                                <span className="material-symbols-outlined">favorite</span>
-                            </button>
+                        <div className="rounded-lg overflow-hidden shadow-lg">
+                            <iframe
+                                src="https://podcast.futurebutnow.xyz/"
+                                className="w-full border-0"
+                                style={{ height: '800px' }}
+                                title="FutureButNow Podcast"
+                                sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
+                            />
                         </div>
                     </div>
-                ))}
-            </div>
+                </div>
+            ) : (
+                // Show search results
+                <div className="flex flex-col gap-1 px-2 overflow-y-auto flex-1">
+                    {loading && <div className="p-4 text-center text-slate-500">搜索中...</div>}
+
+                    {results.map((track) => (
+                        <div key={track.id} className="flex items-center gap-4 bg-background-light dark:bg-background-dark px-2 py-2 justify-between rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/50">
+                            <div className="flex items-center gap-4">
+                                <div
+                                    className="bg-center bg-no-repeat aspect-square bg-cover rounded-md size-14 bg-slate-200 dark:bg-slate-700"
+                                    style={{ backgroundImage: track.cover_url ? `url("${track.cover_url}")` : undefined }}
+                                >
+                                    {!track.cover_url && <span className="material-symbols-outlined text-slate-400 flex items-center justify-center h-full">music_note</span>}
+                                </div>
+                                <div className="flex flex-col justify-center">
+                                    <p className="text-slate-900 dark:text-white text-base font-medium leading-normal line-clamp-1">{track.title}</p>
+                                    <p className="text-slate-500 dark:text-slate-400 text-sm font-normal leading-normal line-clamp-2">{track.artist}</p>
+                                </div>
+                            </div>
+                            <div className="flex items-center gap-2 shrink-0">
+                                <button
+                                    aria-label="Play"
+                                    className="text-slate-900 dark:text-white flex size-10 items-center justify-center rounded-full hover:bg-primary/20"
+                                    onClick={() => setQueue(results, results.indexOf(track))}
+                                >
+                                    <span className="material-symbols-outlined text-3xl">play_circle</span>
+                                </button>
+                                <button
+                                    aria-label="Add to favorites"
+                                    className="text-slate-500 dark:text-slate-400 flex size-10 items-center justify-center rounded-full hover:bg-primary/20"
+                                    onClick={() => handleFavorite(track)}
+                                >
+                                    <span className="material-symbols-outlined">favorite</span>
+                                </button>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            )}
         </div>
     );
 }

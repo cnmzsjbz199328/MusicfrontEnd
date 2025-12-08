@@ -3,7 +3,7 @@ import { usePlayerStore } from '@/store/usePlayerStore';
 import { api } from '@/lib/api';
 
 export function PlayerOverlay() {
-    const { currentTrack, isPlaying, togglePlay, setPlaying, nextTrack, prevTrack, isExpanded, setExpanded, playMode, togglePlayMode } = usePlayerStore();
+    const { currentTrack, isPlaying, togglePlay, setPlaying, nextTrack, prevTrack, isExpanded, setExpanded, isShuffle, toggleShuffle, repeatMode, toggleRepeat } = usePlayerStore();
     const audioRef = useRef<HTMLAudioElement>(null);
     const [resolvedUrl, setResolvedUrl] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
@@ -11,7 +11,6 @@ export function PlayerOverlay() {
     // Progress State
     const [currentTime, setCurrentTime] = useState(0);
     const [duration, setDuration] = useState(0);
-    const [isSeeking, setIsSeeking] = useState(false);
 
     // Lyrics State
     const [lyrics, setLyrics] = useState<string | null>(null);
@@ -90,12 +89,8 @@ export function PlayerOverlay() {
         }
     }, [isPlaying, resolvedUrl]);
 
-    const handleAudioEnded = () => {
-        usePlayerStore.getState().handleTrackEnd();
-    };
-
     const handleTimeUpdate = () => {
-        if (audioRef.current && !isSeeking) {
+        if (audioRef.current) {
             setCurrentTime(audioRef.current.currentTime);
         }
     };
@@ -106,20 +101,12 @@ export function PlayerOverlay() {
         }
     };
 
-    const handleSeekStart = () => {
-        setIsSeeking(true);
-    };
-
     const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
         const time = Number(e.target.value);
-        setCurrentTime(time);
         if (audioRef.current) {
             audioRef.current.currentTime = time;
+            setCurrentTime(time);
         }
-    };
-
-    const handleSeekEnd = () => {
-        setIsSeeking(false);
     };
 
     const formatTime = (seconds: number) => {
@@ -201,10 +188,6 @@ export function PlayerOverlay() {
                                 max={duration || 100}
                                 value={currentTime}
                                 onChange={handleSeek}
-                                onMouseDown={handleSeekStart}
-                                onMouseUp={handleSeekEnd}
-                                onTouchStart={handleSeekStart}
-                                onTouchEnd={handleSeekEnd}
                                 className="absolute w-full h-1.5 opacity-0 z-10 cursor-pointer"
                             />
                             <div className="absolute h-1.5 w-full rounded-full bg-slate-300 dark:bg-white/20"></div>
@@ -228,18 +211,17 @@ export function PlayerOverlay() {
                     <div className="flex items-center justify-around gap-6 pt-1">
                         {/* Shuffle Button */}
                         <button
-                            className={`flex size-12 shrink-0 items-center justify-center rounded-full transition-colors ${['shuffle', 'shuffle-one'].includes(playMode)
-                                    ? 'text-primary'
-                                    : 'text-slate-500 dark:text-slate-400'
+                            className={`flex size-12 shrink-0 items-center justify-center rounded-full transition-colors ${isShuffle
+                                ? 'text-primary'
+                                : 'text-slate-500 dark:text-slate-400'
                                 }`}
-                            onClick={togglePlayMode}
-                            aria-label="Play Mode"
-                            title={`Play Mode: ${playMode}`}
+                            onClick={toggleShuffle}
+                            aria-label="Shuffle"
                         >
                             <span className="material-symbols-outlined text-2xl">shuffle</span>
                         </button>
 
-                        <button className="flex size-12 shrink-0 items-center justify-center rounded-full text-slate-800 dark:text-white" onClick={prevTrack} aria-label="Previous">
+                        <button className="flex size-12 shrink-0 items-center justify-center rounded-full text-slate-800 dark:text-white" onClick={prevTrack}>
                             <span className="material-symbols-outlined text-4xl">skip_previous</span>
                         </button>
 
@@ -247,7 +229,6 @@ export function PlayerOverlay() {
                             className="flex size-16 shrink-0 items-center justify-center rounded-full bg-primary text-background-dark"
                             onClick={togglePlay}
                             disabled={loading || !resolvedUrl}
-                            aria-label={isPlaying ? 'Pause' : 'Play'}
                         >
                             {loading ? (
                                 <span className="material-symbols-outlined text-4xl animate-spin">refresh</span>
@@ -258,22 +239,21 @@ export function PlayerOverlay() {
                             )}
                         </button>
 
-                        <button className="flex size-12 shrink-0 items-center justify-center rounded-full text-slate-800 dark:text-white" onClick={nextTrack} aria-label="Next">
+                        <button className="flex size-12 shrink-0 items-center justify-center rounded-full text-slate-800 dark:text-white" onClick={nextTrack}>
                             <span className="material-symbols-outlined text-4xl">skip_next</span>
                         </button>
 
                         {/* Repeat Button */}
                         <button
-                            className={`flex size-12 shrink-0 items-center justify-center rounded-full transition-colors relative ${playMode.includes('repeat')
-                                    ? 'text-primary'
-                                    : 'text-slate-500 dark:text-slate-400'
+                            className={`flex size-12 shrink-0 items-center justify-center rounded-full transition-colors relative ${repeatMode === 'off'
+                                ? 'text-slate-500 dark:text-slate-400'
+                                : 'text-primary'
                                 }`}
-                            onClick={togglePlayMode}
-                            aria-label="Play Mode"
-                            title={`Play Mode: ${playMode}`}
+                            onClick={toggleRepeat}
+                            aria-label="Repeat"
                         >
                             <span className="material-symbols-outlined text-2xl">repeat</span>
-                            {playMode === 'repeat-one' && (
+                            {repeatMode === 'one' && (
                                 <span className="absolute text-xs font-bold text-primary leading-none">1</span>
                             )}
                         </button>
@@ -287,7 +267,7 @@ export function PlayerOverlay() {
                     src={resolvedUrl}
                     onTimeUpdate={handleTimeUpdate}
                     onLoadedMetadata={handleLoadedMetadata}
-                    onEnded={handleAudioEnded}
+                    onEnded={() => setPlaying(false)}
                     onPause={() => setPlaying(false)}
                     onPlay={() => setPlaying(true)}
                     autoPlay

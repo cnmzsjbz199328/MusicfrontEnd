@@ -10,7 +10,7 @@ interface FavoritesDrawerProps {
 
 export function FavoritesDrawer({ isOpen, onClose }: FavoritesDrawerProps) {
     const [favorites, setFavorites] = useState<Favorite[]>([]);
-    const { setQueue, currentTrack } = usePlayerStore();
+    const { playTrack, currentTrack } = usePlayerStore();
     const [loading, setLoading] = useState(false);
 
     const loadFavorites = async () => {
@@ -57,7 +57,7 @@ export function FavoritesDrawer({ isOpen, onClose }: FavoritesDrawerProps) {
                     {loading && <div className="p-4 text-center text-gray-500">加载中...</div>}
                     {!loading && favorites.length === 0 && <div className="p-4 text-center text-gray-500">暂无收藏</div>}
 
-                    {favorites.map((fav, idx) => (
+                    {favorites.map(fav => (
                         <div
                             key={fav.id}
                             className={`flex items-center justify-between gap-4 rounded-lg p-2 cursor-pointer transition-colors ${currentTrack?.id === fav.id
@@ -65,7 +65,7 @@ export function FavoritesDrawer({ isOpen, onClose }: FavoritesDrawerProps) {
                                     : 'hover:bg-gray-200 dark:hover:bg-white/10'
                                 }`}
                             onClick={() => {
-                                setQueue(favorites, idx);
+                                playTrack(fav);
                                 onClose();
                             }}
                         >
