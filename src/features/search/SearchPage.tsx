@@ -7,6 +7,8 @@ export function SearchPage() {
     const [query, setQuery] = useState('');
     const [results, setResults] = useState<Track[]>([]);
     const [loading, setLoading] = useState(false);
+    const [favoriteLoadingIds, setFavoriteLoadingIds] = useState<Set<string>>(new Set());
+    const [favoriteSuccessIds, setFavoriteSuccessIds] = useState<Set<string>>(new Set());
     const { setQueue } = usePlayerStore();
 
     const handleSearch = async (e: React.FormEvent) => {
@@ -25,7 +27,8 @@ export function SearchPage() {
     };
 
     const handleFavorite = async (track: Track) => {
-        if (!confirm(`确定要收藏 "${track.title}" 吗？这可能需要几秒钟来下载歌曲。`)) return;
+        // Add to loading state
+        setFavoriteLoadingIds(prev => new Set(prev).add(track.id));
 
         try {
              // 1. Resolve track first to get MP3 URL and lyrics
@@ -46,10 +49,30 @@ export function SearchPage() {
                 duration_seconds: 0 // We don't have exact seconds from search result string
             });
 
-            alert(`收藏成功: ${track.title}`);
-            } catch (err) {
-            alert(`收藏失败: ${err instanceof Error ? err.message : String(err)}`);
-            }
+            // Show success state
+            setFavoriteLoadingIds(prev => {
+                const next = new Set(prev);
+                next.delete(track.id);
+                return next;
+            });
+            setFavoriteSuccessIds(prev => new Set(prev).add(track.id));
+
+            // Auto-clear success state after 1s
+            setTimeout(() => {
+                setFavoriteSuccessIds(prev => {
+                    const next = new Set(prev);
+                    next.delete(track.id);
+                    return next;
+                });
+            }, 1000);
+        } catch (err) {
+            // Clear loading state on error
+            setFavoriteLoadingIds(prev => {
+                const next = new Set(prev);
+                next.delete(track.id);
+                return next;
+            });
+        }
     };
 
     return (
@@ -130,17 +153,41 @@ export function SearchPage() {
                             <div className="flex items-center gap-2 shrink-0">
                                 <button
                                     aria-label="Play"
-                                    className="text-slate-900 dark:text-white flex size-10 items-center justify-center rounded-full hover:bg-primary/20"
-                                    onClick={() => setQueue(results, results.indexOf(track))}
+                                    className={`text-slate-900 dark:text-white flex size-10 items-center justify-center rounded-full ${loading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-primary/20'}`}
+                                    onClick={() => !loading && setQueue(results, results.indexOf(track))}
+                                    disabled={loading}
                                 >
-                                    <span className="material-symbols-outlined text-3xl">play_circle</span>
+                                    <span 
+                                        className="material-symbols-outlined text-3xl"
+                                        style={loading ? { animation: 'spin 1s linear infinite' } : {}}
+                                    >
+                                        {loading ? 'refresh' : 'play_circle'}
+                                    </span>
                                 </button>
                                 <button
                                     aria-label="Add to favorites"
-                                    className="text-slate-500 dark:text-slate-400 flex size-10 items-center justify-center rounded-full hover:bg-primary/20"
+                                    className={`flex size-10 items-center justify-center rounded-full transition-colors duration-300 ${
+                                        favoriteLoadingIds.has(track.id)
+                                            ? 'text-slate-400 dark:text-slate-500 cursor-wait'
+                                            : favoriteSuccessIds.has(track.id)
+                                                ? 'text-primary'
+                                                : 'text-slate-500 dark:text-slate-400 hover:bg-primary/20'
+                                    }`}
                                     onClick={() => handleFavorite(track)}
+                                    disabled={favoriteLoadingIds.has(track.id)}
                                 >
-                                    <span className="material-symbols-outlined">favorite</span>
+                                    <span 
+                                        className={`material-symbols-outlined transition-all duration-300 ${
+                                            favoriteLoadingIds.has(track.id) ? 'animate-spin' : ''
+                                        }`}
+                                        style={
+                                            favoriteSuccessIds.has(track.id) 
+                                                ? { fontVariationSettings: "'FILL' 1" }
+                                                : {}
+                                        }
+                                    >
+                                        {favoriteLoadingIds.has(track.id) ? 'refresh' : 'favorite'}
+                                    </span>
                                 </button>
                             </div>
                         </div>
