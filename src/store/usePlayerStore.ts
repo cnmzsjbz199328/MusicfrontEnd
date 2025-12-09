@@ -58,10 +58,10 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
 
     setQueue: (queue, startIndex) => {
         if (queue.length === 0) return;
-        
+
         const newQueue = [...queue];
         const shuffled = shuffleArray(newQueue);
-        
+
         set({
             queue: newQueue,
             shuffledQueue: shuffled,
@@ -75,7 +75,7 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
     playTrack: (track) => {
         const { queue } = get();
         const index = queue.findIndex(t => t.id === track.id);
-        
+
         set({
             currentTrack: track,
             queueIndex: index !== -1 ? index : 0,
@@ -101,22 +101,44 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
 
     nextTrack: () => {
         const { queue, queueIndex, playMode, shuffledQueue } = get();
-        if (queue.length === 0) return;
+        console.log('nextTrack called:', { queueLength: queue.length, queueIndex, playMode });
+
+        if (queue.length === 0) {
+            console.warn('nextTrack: queue is empty');
+            return;
+        }
 
         const currentQueue = ['shuffle', 'shuffle-one'].includes(playMode) ? shuffledQueue : queue;
         const nextIndex = (queueIndex + 1) % currentQueue.length;
 
-        get().playTrack(currentQueue[nextIndex]);
+        console.log('nextTrack: switching to index', nextIndex, 'track:', currentQueue[nextIndex]?.title);
+
+        set({
+            currentTrack: currentQueue[nextIndex],
+            queueIndex: nextIndex,
+            isPlaying: true,
+        });
     },
 
     prevTrack: () => {
         const { queue, queueIndex, playMode, shuffledQueue } = get();
-        if (queue.length === 0) return;
+        console.log('prevTrack called:', { queueLength: queue.length, queueIndex, playMode });
+
+        if (queue.length === 0) {
+            console.warn('prevTrack: queue is empty');
+            return;
+        }
 
         const currentQueue = ['shuffle', 'shuffle-one'].includes(playMode) ? shuffledQueue : queue;
         const prevIndex = (queueIndex - 1 + currentQueue.length) % currentQueue.length;
 
-        get().playTrack(currentQueue[prevIndex]);
+        console.log('prevTrack: switching to index', prevIndex, 'track:', currentQueue[prevIndex]?.title);
+
+        set({
+            currentTrack: currentQueue[prevIndex],
+            queueIndex: prevIndex,
+            isPlaying: true,
+        });
     },
 
     togglePlayMode: () => {
@@ -136,7 +158,7 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
     },
 
     handleTrackEnd: () => {
-        const { playMode, queue, queueIndex } = get();
+        const { playMode, queue, queueIndex, audioElement } = get();
         const isLastTrack = queueIndex === queue.length - 1;
 
         switch (playMode) {
@@ -153,7 +175,11 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
                 break;
 
             case 'repeat-one':
-                get().playTrack(queue[queueIndex]);
+                // Replay current track by resetting audio
+                if (audioElement) {
+                    audioElement.currentTime = 0;
+                    audioElement.play();
+                }
                 break;
 
             case 'shuffle':
@@ -161,7 +187,11 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
                 break;
 
             case 'shuffle-one':
-                get().playTrack(queue[queueIndex]);
+                // Replay current track by resetting audio
+                if (audioElement) {
+                    audioElement.currentTime = 0;
+                    audioElement.play();
+                }
                 break;
 
             default:

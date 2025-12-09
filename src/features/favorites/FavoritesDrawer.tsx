@@ -10,7 +10,7 @@ interface FavoritesDrawerProps {
 
 export function FavoritesDrawer({ isOpen, onClose }: FavoritesDrawerProps) {
     const [favorites, setFavorites] = useState<Favorite[]>([]);
-    const { playTrack, currentTrack } = usePlayerStore();
+    const { setQueue, currentTrack } = usePlayerStore();
     const [loading, setLoading] = useState(false);
 
     const loadFavorites = async () => {
@@ -61,11 +61,12 @@ export function FavoritesDrawer({ isOpen, onClose }: FavoritesDrawerProps) {
                         <div
                             key={fav.id}
                             className={`flex items-center justify-between gap-4 rounded-lg p-2 cursor-pointer transition-colors ${currentTrack?.id === fav.id
-                                    ? 'bg-primary/20'
-                                    : 'hover:bg-gray-200 dark:hover:bg-white/10'
+                                ? 'bg-primary/20'
+                                : 'hover:bg-gray-200 dark:hover:bg-white/10'
                                 }`}
                             onClick={() => {
-                                playTrack(fav);
+                                const index = favorites.findIndex(f => f.id === fav.id);
+                                setQueue(favorites, index);
                                 onClose();
                             }}
                         >
