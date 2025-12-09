@@ -54,6 +54,7 @@ export function PlayerOverlay() {
                 }
             } finally {
                 setLoading(false);
+                usePlayerStore.getState().setLoadingTrackId(null);
             }
         };
 

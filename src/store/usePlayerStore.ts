@@ -19,6 +19,7 @@ interface PlayerState {
     queue: (Track | Favorite)[];
     queueIndex: number;
     audioElement: HTMLAudioElement | null;
+    loadingTrackId: string | null;
 
     // Playback Mode System
     playMode: PlayMode;
@@ -41,6 +42,7 @@ interface PlayerState {
     handleTrackEnd: () => void;
     toggleFavorites: () => void;
     setExpanded: (expanded: boolean) => void;
+    setLoadingTrackId: (id: string | null) => void;
 }
 
 export const usePlayerStore = create<PlayerState>((set, get) => ({
@@ -49,6 +51,7 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
     queue: [],
     queueIndex: -1,
     audioElement: null,
+    loadingTrackId: null,
     playMode: 'normal',
     shuffledQueue: [],
     isFavoritesOpen: false,
@@ -69,6 +72,7 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
             currentTrack: newQueue[startIndex],
             isPlaying: true,
             isExpanded: false,
+            loadingTrackId: newQueue[startIndex].id,
         });
     },
 
@@ -80,6 +84,7 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
             currentTrack: track,
             queueIndex: index !== -1 ? index : 0,
             isPlaying: true,
+            loadingTrackId: track.id,
         });
     },
 
@@ -108,11 +113,13 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
 
          const currentQueue = ['shuffle', 'shuffle-one'].includes(playMode) ? shuffledQueue : queue;
          const nextIndex = (queueIndex + 1) % currentQueue.length;
+         const nextTrack = currentQueue[nextIndex];
 
         set({
-            currentTrack: currentQueue[nextIndex],
+            currentTrack: nextTrack,
             queueIndex: nextIndex,
             isPlaying: true,
+            loadingTrackId: nextTrack.id,
         });
     },
 
@@ -125,11 +132,13 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
 
          const currentQueue = ['shuffle', 'shuffle-one'].includes(playMode) ? shuffledQueue : queue;
          const prevIndex = (queueIndex - 1 + currentQueue.length) % currentQueue.length;
+         const prevTrack = currentQueue[prevIndex];
 
         set({
-            currentTrack: currentQueue[prevIndex],
+            currentTrack: prevTrack,
             queueIndex: prevIndex,
             isPlaying: true,
+            loadingTrackId: prevTrack.id,
         });
     },
 
@@ -193,4 +202,5 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
 
     toggleFavorites: () => set((state) => ({ isFavoritesOpen: !state.isFavoritesOpen })),
     setExpanded: (expanded) => set({ isExpanded: expanded }),
+    setLoadingTrackId: (id) => set({ loadingTrackId: id }),
 }));

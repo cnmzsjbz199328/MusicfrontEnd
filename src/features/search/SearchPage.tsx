@@ -9,7 +9,7 @@ export function SearchPage() {
     const [loading, setLoading] = useState(false);
     const [favoriteLoadingIds, setFavoriteLoadingIds] = useState<Set<string>>(new Set());
     const [favoriteSuccessIds, setFavoriteSuccessIds] = useState<Set<string>>(new Set());
-    const { setQueue } = usePlayerStore();
+    const { setQueue, loadingTrackId } = usePlayerStore();
 
     const handleSearch = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -75,6 +75,13 @@ export function SearchPage() {
         }
     };
 
+    const handlePlayTrack = (track: Track) => {
+        // Only allow playing if no track is currently loading
+        if (!loadingTrackId) {
+            setQueue(results, results.indexOf(track));
+        }
+    };
+
     return (
         <div className="flex flex-col">
             {/* Top App Bar */}
@@ -136,8 +143,11 @@ export function SearchPage() {
                 <div className="flex flex-col gap-1 px-2 overflow-y-auto flex-1">
                     {loading && <div className="p-4 text-center text-slate-500">搜索中...</div>}
 
-                    {results.map((track) => (
-                        <div key={track.id} className="flex items-center gap-4 bg-background-light dark:bg-background-dark px-2 py-2 justify-between rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/50">
+                    {results.map((track) => {
+                        const isTrackLoading = loadingTrackId === track.id;
+                        
+                        return (
+                            <div key={track.id} className="flex items-center gap-4 bg-background-light dark:bg-background-dark px-2 py-2 justify-between rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/50">
                             <div className="flex items-center gap-4">
                                 <div
                                     className="bg-center bg-no-repeat aspect-square bg-cover rounded-md size-14 bg-slate-200 dark:bg-slate-700"
@@ -152,16 +162,19 @@ export function SearchPage() {
                             </div>
                             <div className="flex items-center gap-2 shrink-0">
                                 <button
-                                    aria-label="Play"
-                                    className={`text-slate-900 dark:text-white flex size-10 items-center justify-center rounded-full ${loading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-primary/20'}`}
-                                    onClick={() => !loading && setQueue(results, results.indexOf(track))}
-                                    disabled={loading}
+                                    aria-label={isTrackLoading ? "Loading" : "Play"}
+                                    className={`text-slate-900 dark:text-white flex size-10 items-center justify-center rounded-full transition-all ${
+                                        isTrackLoading 
+                                            ? 'opacity-50 cursor-wait' 
+                                            : 'hover:bg-primary/20'
+                                    }`}
+                                    onClick={() => handlePlayTrack(track)}
+                                    disabled={isTrackLoading}
                                 >
                                     <span 
-                                        className="material-symbols-outlined text-3xl"
-                                        style={loading ? { animation: 'spin 1s linear infinite' } : {}}
+                                        className={`material-symbols-outlined text-3xl ${isTrackLoading ? 'animate-spin' : ''}`}
                                     >
-                                        {loading ? 'refresh' : 'play_circle'}
+                                        {isTrackLoading ? 'refresh' : 'play_circle'}
                                     </span>
                                 </button>
                                 <button
@@ -191,7 +204,8 @@ export function SearchPage() {
                                 </button>
                             </div>
                         </div>
-                    ))}
+                        );
+                    })}
                 </div>
             )}
         </div>
