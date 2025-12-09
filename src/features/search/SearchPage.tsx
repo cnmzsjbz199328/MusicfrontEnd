@@ -18,7 +18,6 @@ export function SearchPage() {
             const tracks = await api.search(query);
             setResults(tracks);
         } catch (error) {
-            console.error('Search failed', error);
             // TODO: Show error toast
         } finally {
             setLoading(false);
@@ -29,8 +28,7 @@ export function SearchPage() {
         if (!confirm(`确定要收藏 "${track.title}" 吗？这可能需要几秒钟来下载歌曲。`)) return;
 
         try {
-            console.log(`Attempting to favorite track: ${track.id} (${track.title})`);
-            // 1. Resolve track first to get MP3 URL and lyrics
+             // 1. Resolve track first to get MP3 URL and lyrics
             // Encode ID to handle special characters
             const trackData = await api.getTrack(encodeURIComponent(track.id));
 
@@ -49,10 +47,9 @@ export function SearchPage() {
             });
 
             alert(`收藏成功: ${track.title}`);
-        } catch (err) {
-            console.error('Add favorite error', err);
+            } catch (err) {
             alert(`收藏失败: ${err instanceof Error ? err.message : String(err)}`);
-        }
+            }
     };
 
     return (

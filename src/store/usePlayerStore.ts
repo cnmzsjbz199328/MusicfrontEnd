@@ -100,18 +100,14 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
     })),
 
     nextTrack: () => {
-        const { queue, queueIndex, playMode, shuffledQueue } = get();
-        console.log('nextTrack called:', { queueLength: queue.length, queueIndex, playMode });
+         const { queue, queueIndex, playMode, shuffledQueue } = get();
 
-        if (queue.length === 0) {
-            console.warn('nextTrack: queue is empty');
-            return;
-        }
+         if (queue.length === 0) {
+             return;
+         }
 
-        const currentQueue = ['shuffle', 'shuffle-one'].includes(playMode) ? shuffledQueue : queue;
-        const nextIndex = (queueIndex + 1) % currentQueue.length;
-
-        console.log('nextTrack: switching to index', nextIndex, 'track:', currentQueue[nextIndex]?.title);
+         const currentQueue = ['shuffle', 'shuffle-one'].includes(playMode) ? shuffledQueue : queue;
+         const nextIndex = (queueIndex + 1) % currentQueue.length;
 
         set({
             currentTrack: currentQueue[nextIndex],
@@ -121,18 +117,14 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
     },
 
     prevTrack: () => {
-        const { queue, queueIndex, playMode, shuffledQueue } = get();
-        console.log('prevTrack called:', { queueLength: queue.length, queueIndex, playMode });
+         const { queue, queueIndex, playMode, shuffledQueue } = get();
 
-        if (queue.length === 0) {
-            console.warn('prevTrack: queue is empty');
-            return;
-        }
+         if (queue.length === 0) {
+             return;
+         }
 
-        const currentQueue = ['shuffle', 'shuffle-one'].includes(playMode) ? shuffledQueue : queue;
-        const prevIndex = (queueIndex - 1 + currentQueue.length) % currentQueue.length;
-
-        console.log('prevTrack: switching to index', prevIndex, 'track:', currentQueue[prevIndex]?.title);
+         const currentQueue = ['shuffle', 'shuffle-one'].includes(playMode) ? shuffledQueue : queue;
+         const prevIndex = (queueIndex - 1 + currentQueue.length) % currentQueue.length;
 
         set({
             currentTrack: currentQueue[prevIndex],

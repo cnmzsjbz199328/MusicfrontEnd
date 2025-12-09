@@ -14,16 +14,14 @@ export function FavoritesDrawer({ isOpen, onClose }: FavoritesDrawerProps) {
     const [loading, setLoading] = useState(false);
 
     const loadFavorites = async () => {
-        setLoading(true);
-        try {
-            const data = await api.getFavorites();
-            setFavorites(data);
-        } catch (err) {
-            console.error('Failed to load favorites', err);
-        } finally {
-            setLoading(false);
-        }
-    };
+         setLoading(true);
+         try {
+             const data = await api.getFavorites();
+             setFavorites(data);
+         } finally {
+             setLoading(false);
+         }
+     };
 
     useEffect(() => {
         if (isOpen) {
@@ -38,7 +36,7 @@ export function FavoritesDrawer({ isOpen, onClose }: FavoritesDrawerProps) {
             await api.removeFavorite(id);
             setFavorites(prev => prev.filter(f => f.id !== id));
         } catch (err) {
-            console.error('Failed to delete favorite', err);
+            // Silently fail
         }
     };
 

@@ -18,11 +18,9 @@ export function PlayerOverlay() {
     const [showLyrics, setShowLyrics] = useState(false);
 
     useEffect(() => {
-        if (!currentTrack) return;
+         if (!currentTrack) return;
 
-        console.log('currentTrack changed:', currentTrack.title, 'id:', currentTrack.id);
-
-        const resolve = async () => {
+         const resolve = async () => {
             setResolvedUrl(null);
             setLyrics(null);
             setLoading(true);
@@ -31,41 +29,29 @@ export function PlayerOverlay() {
             try {
                 if ('track_id' in currentTrack) {
                     // It's a favorite (has track_id and id is the DB ID). Use the stream endpoint.
-                    console.log('Playing favorite:', currentTrack.title, currentTrack);
                     setResolvedUrl(api.getStreamUrl(currentTrack.id));
                     if (currentTrack.lyrics) {
-                        console.log('Lyrics found in favorite:', currentTrack.lyrics.substring(0, 20) + '...');
                         setLyrics(currentTrack.lyrics);
                     } else if (currentTrack.lyrics_url) {
-                        console.log('Fetching lyrics from URL:', currentTrack.lyrics_url);
                         try {
                             // Fetch directly from R2 (publicly accessible)
                             const res = await fetch(currentTrack.lyrics_url);
                             if (res.ok) {
                                 const text = await res.text();
                                 setLyrics(text);
-                            } else {
-                                console.error('Failed to fetch lyrics from URL');
                             }
                         } catch (e) {
-                            console.error('Error fetching lyrics:', e);
+                            // Silently fail - continue without lyrics
                         }
-                    } else {
-                        console.log('No lyrics found in favorite object');
                     }
                 } else {
                     // It's a search result (id is the track ID). Resolve it.
-                    console.log('Resolving track:', currentTrack.title);
                     const data = await api.getTrack(currentTrack.id);
                     if (data.url) {
                         setResolvedUrl(data.url);
                         if (data.lyrics) setLyrics(data.lyrics);
-                    } else {
-                        console.error('No URL found for track');
                     }
                 }
-            } catch (err) {
-                console.error('Failed to resolve track', err);
             } finally {
                 setLoading(false);
             }
@@ -86,7 +72,7 @@ export function PlayerOverlay() {
     useEffect(() => {
         if (audioRef.current) {
             if (isPlaying) {
-                audioRef.current.play().catch(e => console.error("Play failed", e));
+                audioRef.current.play().catch(() => {});
             } else {
                 audioRef.current.pause();
             }
@@ -116,7 +102,6 @@ export function PlayerOverlay() {
 
     const handleSeekEnd = (e: React.ChangeEvent<HTMLInputElement>) => {
         const time = Number(e.target.value);
-        console.log('handleSeek: seeking to', time, 'seconds');
         if (audioRef.current) {
             audioRef.current.currentTime = time;
             setCurrentTime(time);
